@@ -20,19 +20,21 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   # selectrmclu="2,3,4,5,6,37"
   rm_clu<-paste0("cluster",unlist(strsplit(rmclu,split=",")))
   hm_zmod_rm<-data
-  
-  set.seed(42)
   print(paste0("computing heatmap of ",HMkc,"cols and ",HMkr,"rows"))
-  ht = Heatmap(t(hm_zmod_rm), column_title = "Module clustering based on corrected z score", name = "mat",
+  set.seed(42)
+  ht = draw(Heatmap(t(hm_zmod_rm), column_title = "Module clustering based on corrected z score", name = "mat",
                     row_names_gp =gpar(fontsize=rel(400/length(colnames(hm_zmod_rm)))),show_row_dend = TRUE,
                     row_dend_reorder = F, cluster_rows = T, row_order=NULL,
                     column_dend_reorder = F, cluster_columns = T,
-                    column_names_gp = gpar(fontsize=rel(400/length(rownames(hm_zmod_rm)))),column_km = HMkc,row_km = HMkr, use_raster = T) 
+                    column_names_gp = gpar(fontsize=rel(400/length(rownames(hm_zmod_rm)))),column_km = HMkc,row_km = HMkr, use_raster = T) )
 
-  htmxord<-as.matrix(t(hm_zmod_rm))[ as.vector(unlist(row_order(ht))) , as.vector(unlist(column_order(ht))) ]
+  metacells_kclust<- column_order(ht) 
+  metacells_kclustrow<- row_order(ht) 
+  
+  htmxord<-as.matrix(t(hm_zmod_rm))[ as.vector(unlist(metacells_kclustrow)) , as.vector(unlist(metacells_kclust)) ]
   htpt1<-heatmaply(htmxord, dendrogram = "none",limits=range(-2,2),colors = "RdBu",Rowv=F,Colv=F,legendgroup="1st",showlegend = T,coloraxis = 'coloraxis',
                    scale_fill_gradient_fun =scale_fill_gradient2(low = "blue",mid = "white", high = "red", limits=c(-2, 2), oob=squish) )
-  metacells_kclust<- column_order(ht) 
+
   # Problem if only one metacell is in the cluster : it doesn't read as a matrix !! 
   # Use rownames(hm_zmod_rm)[metacells_kclust[[i]]]
   # instead of 
