@@ -54,8 +54,7 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   Mc_to_exclude<- out$Metacell[which(out$Cluster%in%rm_clu)]
   print("metacells identified")
   df$mc<-paste0("mc",df$mc)
-  
-  df$mc<-paste0("mc",df$mc)
+
   write.csv(x = df$names[which(df$mc%in%Mc_to_exclude)], file=paste0("cells_to_rm_",name,".csv") ,quote = F,row.names = T)
   print("csv written")
   #save(Mc_to_exclude,file=paste0("mc_sub_",name,".rds"))
