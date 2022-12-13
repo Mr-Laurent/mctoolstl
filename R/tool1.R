@@ -18,7 +18,7 @@
 cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,name=NULL){
 
   # selectrmclu="2,3,4,5,6,37"
-  rm_clu<-paste0("cluster",unlist(strsplit(rmclu,split=",")))
+
   hm_zmod_rm<-data
   print(paste0("computing heatmap of ",HMkc,"cols and ",HMkr,"rows"))
   set.seed(42)
@@ -53,11 +53,12 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   rm(clu)
   out<-as.data.frame(out)
   
-  Mc_to_exclude<- out$Metacell[which(out$Cluster%in%rm_clu)]
+  rm_clu<-paste0("cluster",unlist(strsplit(rmclu,split=",")))
+  Mc_to_subset<- out$Metacell[which(out$Cluster%in%rm_clu)]
   print("metacells identified")
-  metadata$mc<-paste0("mc",metadata$mc)
-
-  write.csv(x = metadata$names[which(metadata$mc%in%Mc_to_exclude)], file=paste0("cells_to_rm_",name,".csv") ,quote = F,row.names = T)
+  metadata$mc2<-paste0("mc",metadata$mc)
+  write.csv(x = metadata$names[which(metadata$mc2%in%Mc_to_subset)], file=paste0("cells_to_rm_",name,"bis.csv") ,quote = F,row.names = T)
+  
   print("csv written")
   #save(Mc_to_exclude,file=paste0("mc_sub_",name,".rds"))
   #print(paste0("saved cell names in mc_sub_",name,".rds"))
