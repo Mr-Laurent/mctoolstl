@@ -57,7 +57,7 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   Mc_to_subset<- out$Metacell[which(out$Cluster%in%rm_clu)]
   print("metacells identified")
   metadata$mc2<-paste0("mc",metadata$mc)
-  write.csv(x = metadata$names[which(metadata$mc2%in%Mc_to_subset)], file=paste0("cells_to_rm_",name,"bis.csv") ,quote = F,row.names = T)
+  write.csv(x = metadata$names[which(metadata$mc2%in%Mc_to_subset)], file=paste0("cells_to_rm_",name,".csv") ,quote = F,row.names = T)
   
   print("csv written")
   #save(Mc_to_exclude,file=paste0("mc_sub_",name,".rds"))
@@ -67,3 +67,56 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
 
 
 
+
+
+#' Get the gene to use in module analysis and plot them
+#' They are the most variable+expressed genes, following loess curve
+#' 
+#'
+#' @param varmean_df dataframe of mean and variance of the genes
+#' @param vm_MeanThres threshold for the log(mean) of expression
+#' @param vm_VarmeanThres threshold for the curve start
+#' @param x1min min value for the plot
+#' @param x1max max value for the plot
+#' @return TRUE/FALSE genes kept
+#' @export
+#' 
+#' 
+
+
+
+vm_genes_in_mod<-function(varmean_df=NULL,
+                          vm_MeanThres=-1,
+                          vm_VarmeanThres=1,
+                          x1min=-1,
+                          x1max=3.5){
+  #Compute loess curve to get the variable genes
+  x=log10(varmean_df$m)
+  breaks=seq(min(x),max(x),.2)
+  lv=log2(varmean_df$v/varmean_df$m)
+  # erreur en metacell : des levels eleves n'avaient pas de valeurs dedans, 
+  # (a cause d'un outlier: MALAT1, 7k en moy vs 1k pour les autres) donc ajouter "drop=T" a split
+  z=sapply(split(lv,cut(x,breaks)),min,na.rm=T)
+  maskinf=is.infinite(z)
+  z=z[!maskinf]
+  b=breaks[-length(breaks)]
+  b=b[!maskinf]
+  # En fait si on drop les levels, on ne drop pas dans breaks donc toujours probleme.
+  # SOLUTION : VIRER MALAT1
+  lo=loess(z~b)
+  #Plot of the loess curve for variable gene selection 
+  plot(log10(varmean_df$m),log2(varmean_df$v/varmean_df$m),xlab="Log10(mean)",ylab="log2(var/mean)",panel.first=grid())
+  x1=seq(x1min,x1max,l=100)
+  lline=predict(lo,newdata =x1)
+  lines(x1,lline+as.numeric(vm_VarmeanThres),col=2)
+  abline(v=vm_MeanThres,col=2)
+  lline2=predict(lo,newdata =log10(varmean_df$m))
+  
+  
+  ## Selection of the genes 
+  
+  # Use the same threshold but this time to subset the genes to keep from the matrix
+  geneModuleMask<-log10(varmean_df$m)>as.numeric(vm_MeanThres)&log2(varmean_df$v/varmean_df$m)>lline2+as.numeric(vm_VarmeanThres)
+  return(geneModuleMask)
+
+}
