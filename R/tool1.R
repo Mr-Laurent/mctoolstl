@@ -31,11 +31,11 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   metacells_kclust<- column_order(ht) 
   metacells_kclustrow<- row_order(ht) 
   
-  htmxord<-as.matrix(t(hm_zmod_rm))[ as.vector(unlist(metacells_kclustrow)) , as.vector(unlist(metacells_kclust)) ]
-  htpt1<-heatmaply(htmxord, dendrogram = "none",limits=range(-2,2),colors = "RdBu",Rowv=F,Colv=F,legendgroup="1st",showlegend = T,coloraxis = 'coloraxis',
-                   scale_fill_gradient_fun =scale_fill_gradient2(low = "blue",mid = "white", high = "red", limits=c(-2, 2), oob=squish) )
-
-  # Problem if only one metacell is in the cluster : it doesn't read as a matrix !! 
+  # htmxord<-as.matrix(t(hm_zmod_rm))[ as.vector(unlist(metacells_kclustrow)) , as.vector(unlist(metacells_kclust)) ]
+  # htpt1<-heatmaply(htmxord, dendrogram = "none",limits=range(-2,2),colors = "RdBu",Rowv=F,Colv=F,legendgroup="1st",showlegend = T,coloraxis = 'coloraxis',
+  #                  scale_fill_gradient_fun =scale_fill_gradient2(low = "blue",mid = "white", high = "red", limits=c(-2, 2), oob=squish) )
+  # 
+  # # Problem if only one metacell is in the cluster : it doesn't read as a matrix !! 
   # Use rownames(hm_zmod_rm)[metacells_kclust[[i]]]
   # instead of 
   #     rownames(hm_zmod_rm[metacells_kclust[[i]],])
@@ -57,7 +57,7 @@ cells_from_mc_hm<-function(data=NULL,metadata=NULL,HMkc=40,HMkr=0,rmclu=NULL,nam
   Mc_to_subset<- out$Metacell[which(out$Cluster%in%rm_clu)]
   print("metacells identified")
   metadata$mc2<-paste0("mc",metadata$mc)
-  write.csv(x = metadata$names[which(metadata$mc2%in%Mc_to_subset)], file=paste0("cells_to_rm_",name,".csv") ,quote = F,row.names = T)
+  write.csv(x = metadata$names[which(metadata$mc2%in%Mc_to_subset)], file=paste0("cells_to_keep_",name,".csv") ,quote = F,row.names = T)
   
   print("csv written")
   #save(Mc_to_exclude,file=paste0("mc_sub_",name,".rds"))

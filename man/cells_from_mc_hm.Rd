@@ -4,10 +4,19 @@
 \alias{cells_from_mc_hm}
 \title{Get metacells names from the heatmap of the metacells object}
 \usage{
-cells_from_mc_hm(data = NULL, HMkc = 40, HMkr = 0, rmclu = NULL, name = NULL)
+cells_from_mc_hm(
+  data = NULL,
+  metadata = NULL,
+  HMkc = 40,
+  HMkr = 0,
+  rmclu = NULL,
+  name = NULL
+)
 }
 \arguments{
 \item{data}{Metacell z matrix}
+
+\item{metadata}{metadata with cells corresponding to metacells}
 
 \item{HMkc}{Number of k groups of columns}
 
