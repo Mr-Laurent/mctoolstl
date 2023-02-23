@@ -120,3 +120,32 @@ vm_genes_in_mod<-function(varmean_df=NULL,
   return(geneModuleMask)
 
 }
+
+
+
+
+
+
+#' Darkening colors (brightness)
+#' 
+#'
+#' @param color the color to change
+#' @param bright the 0 to 1 value to darken
+#' @return The darker Hex color
+#' @export
+#' 
+#' 
+
+
+color_darkener<-function(color,bright){
+  # Convert the hex color value to RGB
+  rgb_color <- col2rgb(color)
+  # Scale the RGB values to make the color darker
+  darker_rgb_color <- rgb_color * bright
+  # Convert the adjusted RGB values back to hex
+  darker_hex_color <- rgb(t(darker_rgb_color), maxColorValue = 255)
+  return(darker_hex_color)
+  
+}
+
+
